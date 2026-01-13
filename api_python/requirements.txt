@@ -1,0 +1,9 @@
+flask
+python-dotenv
+transformers
+torch
+huggingface-hub
+groq
+pydantic
+accelerate
+google-genai
