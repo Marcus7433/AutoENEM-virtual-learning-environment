@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-brand: #00ae4f;
+  --color-brand-hover: #009945;
+  --color-brand-soft: #b7efca;
+  --color-brand-faint: #e8f5ec;
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}

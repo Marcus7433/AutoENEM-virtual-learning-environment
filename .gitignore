@@ -1,34 +1,41 @@
-# --- ARQUIVOS DE SISTEMA E IDE ---
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+dist-ssr/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
 .DS_Store
 Thumbs.db
-.vscode/
-.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.opencode.json
 
-# --- SEGURANÇA (NUNCA ENVIE ISSO) ---
-.env
-.env.local
-*.key
-*.pem
-
-# --- PYTHON ---
+# Python
 __pycache__/
-*.pyc
-venv/
+*.py[cod]
+*.pyo
 .venv/
+venv/
 env/
+*.egg-info/
+.python-version
 
-# --- NODE.JS ---
-node_modules/
-npm-debug.log
-yarn-error.log
-
-# --- BANCOS DE DADOS LOCAIS ---
-*.sqlite
-*.db
-*.sqlite3
-web_interface/dev.db
-
-# --- ARQUIVOS DE UPLOAD/MÍDIA ---
-api_python/uploads/
-web_interface/uploads_temp/
-web_interface/public/uploads/
+# Test coverage
+coverage/
