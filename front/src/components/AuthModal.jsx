@@ -121,8 +121,9 @@ function AuthModal({ open, initialMode = 'login', position = 'side', onClose, on
       className={`fixed inset-0 z-50 flex bg-black/20 px-4 backdrop-blur-sm ${
         isCentered ? 'items-center justify-center' : 'items-start justify-end pt-12'
       }`}
+      onClick={onClose}
     >
-      <div className="w-full max-w-[330px] overflow-hidden rounded-xl bg-white shadow-2xl">
+      <div className="w-full max-w-[330px] overflow-hidden rounded-xl bg-white shadow-2xl dark:bg-slate-900 dark:shadow-black/60" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between bg-brand px-4 py-3 text-white">
           <h2 className="text-sm font-semibold tracking-tight">
             {mode === 'login' ? 'Entrar na conta' : 'Criar conta'}
@@ -135,42 +136,42 @@ function AuthModal({ open, initialMode = 'login', position = 'side', onClose, on
         <form onSubmit={handleSubmit} className="space-y-3 p-4">
           {mode === 'signup' && (
             <div>
-              <label className="mb-1 block text-[11px] font-medium text-slate-700">Nome Completo</label>
+              <label className="mb-1 block text-[11px] font-medium text-slate-700 dark:text-slate-300">Nome Completo</label>
               <div className="relative">
-                <FaUser className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={13} />
+                <FaUser className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={13} />
                 <input
                   name="name"
                   placeholder="Seu nome completo"
-                  className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-10 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none dark:border-white/10 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-emerald-500"
                 />
               </div>
             </div>
           )}
 
           <div>
-            <label className="mb-1 block text-[11px] font-medium text-slate-700">E-mail</label>
+            <label className="mb-1 block text-[11px] font-medium text-slate-700 dark:text-slate-300">E-mail</label>
             <div className="relative">
-              <FiMail className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
+              <FiMail className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={14} />
               <input
                 required
                 name="email"
                 type="email"
                 placeholder="seu@email.com"
-                className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-3 text-sm text-slate-700 placeholder:text-slate-400 outline-none focus:border-emerald-400"
+                className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-10 pr-3 text-sm text-slate-700 placeholder:text-slate-400 outline-none focus:border-emerald-400 dark:border-white/10 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-emerald-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="mb-1 block text-[11px] font-medium text-slate-700">Senha</label>
+            <label className="mb-1 block text-[11px] font-medium text-slate-700 dark:text-slate-300">Senha</label>
             <div className="relative">
-              <FiLock className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
+              <FiLock className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={14} />
               <input
                 required
                 name="password"
                 type="password"
                 placeholder="********"
-                className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-3 text-sm text-slate-700 placeholder:text-slate-400 outline-none focus:border-emerald-400"
+                className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-10 pr-3 text-sm text-slate-700 placeholder:text-slate-400 outline-none focus:border-emerald-400 dark:border-white/10 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-emerald-500"
               />
             </div>
           </div>
@@ -189,7 +190,7 @@ function AuthModal({ open, initialMode = 'login', position = 'side', onClose, on
 
           {mode === 'login' && (
             <>
-              <p className="text-right text-[11px] text-emerald-700">Esqueci a senha?</p>
+              <p className="text-right text-[11px] text-emerald-700 dark:text-emerald-400">Esqueci a senha?</p>
               <button
                 disabled={loading}
                 type="submit"
@@ -200,30 +201,30 @@ function AuthModal({ open, initialMode = 'login', position = 'side', onClose, on
             </>
           )}
 
-          <p className="text-center text-[11px] text-slate-600">
+          <p className="text-center text-[11px] text-slate-600 dark:text-slate-400">
             {mode === 'login' ? 'Não tem uma conta?' : 'Já tem uma conta?'}{' '}
             <button
               type="button"
               onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
-              className="font-semibold text-emerald-700 underline-offset-2 hover:underline"
+              className="font-semibold text-emerald-700 underline-offset-2 hover:underline dark:text-emerald-400"
             >
               {mode === 'login' ? 'Cadastre-se' : 'Entrar'}
             </button>
           </p>
 
           <div className="flex items-center gap-2">
-            <span className="h-px flex-1 bg-slate-200" />
-            <p className="text-[11px] text-slate-500">ou continue com</p>
-            <span className="h-px flex-1 bg-slate-200" />
+            <span className="h-px flex-1 bg-slate-200 dark:bg-white/10" />
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">ou continue com</p>
+            <span className="h-px flex-1 bg-slate-200 dark:bg-white/10" />
           </div>
 
           <button
             type="button"
             disabled={loading}
             onClick={() => handleOAuth('google')}
-            className="flex w-full items-center justify-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-60 dark:border-white/10 dark:text-slate-200 dark:hover:bg-white/5"
           >
-            <FaGoogle className="h-3.5 w-3.5 text-black" />
+            <FaGoogle className="h-3.5 w-3.5 text-black dark:text-white" />
             Google
           </button>
 
@@ -231,7 +232,7 @@ function AuthModal({ open, initialMode = 'login', position = 'side', onClose, on
             type="button"
             disabled={loading}
             onClick={() => handleOAuth('github')}
-            className="flex w-full items-center justify-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-60 dark:border-white/10 dark:text-slate-200 dark:hover:bg-white/5"
           >
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white">
               <FaGithub className="h-3.5 w-3.5 text-slate-800" />

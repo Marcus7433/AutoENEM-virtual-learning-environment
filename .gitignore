@@ -39,3 +39,6 @@ env/
 
 # Test coverage
 coverage/
+
+# Scripts de seed / dados de teste
+server/seed.js

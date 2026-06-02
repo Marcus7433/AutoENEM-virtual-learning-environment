@@ -3,6 +3,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AuthCallbackPage from './pages/AuthCallbackPage';
 import EssaysHistoryPage from './pages/EssaysHistoryPage';
 import LandingPage from './pages/LandingPage';
+import ProgressPage from './pages/ProgressPage';
 import SettingsPage from './pages/SettingsPage';
 
 function App() {
@@ -16,6 +17,15 @@ function App() {
         element={
           <ProtectedRoute>
             <EssaysHistoryPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/progresso"
+        element={
+          <ProtectedRoute>
+            <ProgressPage />
           </ProtectedRoute>
         }
       />

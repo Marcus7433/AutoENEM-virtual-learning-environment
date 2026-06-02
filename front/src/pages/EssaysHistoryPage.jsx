@@ -10,6 +10,7 @@ function EssaysHistoryPage() {
   const [essays, setEssays] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [sort, setSort] = useState({ date: null, score: null });
   const [pendingDelete, setPendingDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState(null);
@@ -23,9 +24,22 @@ function EssaysHistoryPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const filtered = essays.filter((e) =>
-    e.topic.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filtered = essays
+    .filter((e) => e.topic.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => {
+      if (sort.score) {
+        const diff = sort.score === 'score-desc'
+          ? b.final_score - a.final_score
+          : a.final_score - b.final_score;
+        if (diff !== 0) return diff;
+      }
+      if (sort.date) {
+        return sort.date === 'date-desc'
+          ? new Date(b.created_at) - new Date(a.created_at)
+          : new Date(a.created_at) - new Date(b.created_at);
+      }
+      return 0;
+    });
 
   const handleCardClick = async (essay) => {
     try {
@@ -74,7 +88,12 @@ function EssaysHistoryPage() {
           Visualize e acompanhe todas as suas redações corrigidas
         </p>
 
-        <EssaySearchBar value={search} onChange={(e) => setSearch(e.target.value)} />
+        <EssaySearchBar
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          sort={sort}
+          onSortChange={setSort}
+        />
 
         {loading ? (
           <p className="mt-12 text-center text-white/70">Carregando redações...</p>

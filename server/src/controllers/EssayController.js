@@ -113,6 +113,67 @@ class EssayController {
     }
   }
 
+  static async getProgress(req, res) {
+    try {
+      const essays = await EssayModel.getProgressData(req.user?.id);
+
+      const avg = (arr) => Math.round(arr.reduce((s, x) => s + x, 0) / arr.length);
+      const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+      if (essays.length === 0) {
+        return res.json({
+          total: 0, bestScore: 0, avgScore: 0, thisMonth: 0,
+          monthlyData: [],
+          competencies: Array.from({ length: 5 }, (_, i) => ({ numero: i + 1, avg: 0, trend: 0 })),
+        });
+      }
+
+      const now = new Date();
+      const total = essays.length;
+      const bestScore = Math.max(...essays.map((e) => e.final_score));
+      const avgScore = avg(essays.map((e) => e.final_score));
+      const thisMonth = essays.filter((e) => {
+        const d = new Date(e.created_at);
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      }).length;
+
+      const monthMap = new Map();
+      for (const e of essays) {
+        const d = new Date(e.created_at);
+        const key = `${d.getFullYear()}-${String(d.getMonth()).padStart(2, '0')}`;
+        if (!monthMap.has(key)) monthMap.set(key, { scores: [], c: [[], [], [], [], []] });
+        const entry = monthMap.get(key);
+        entry.scores.push(e.final_score);
+        for (let i = 0; i < 5; i++) {
+          entry.c[i].push(e.feedback_json?.[`c${i + 1}_nota`] ?? 0);
+        }
+      }
+
+      const monthlyData = [...monthMap.entries()]
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([key, v]) => {
+          const mo = parseInt(key.split('-')[1], 10);
+          const result = { month: MONTHS[mo], avg: avg(v.scores) };
+          for (let i = 0; i < 5; i++) result[`c${i + 1}`] = avg(v.c[i]);
+          return result;
+        });
+
+      const len = monthlyData.length;
+      const competencies = Array.from({ length: 5 }, (_, i) => {
+        const scores = essays.map((e) => e.feedback_json?.[`c${i + 1}_nota`] ?? 0);
+        const compAvg = avg(scores);
+        const trend = len >= 2
+          ? (monthlyData[len - 1][`c${i + 1}`] ?? 0) - (monthlyData[len - 2][`c${i + 1}`] ?? 0)
+          : 0;
+        return { numero: i + 1, avg: compAvg, trend };
+      });
+
+      return res.json({ total, bestScore, avgScore, thisMonth, monthlyData, competencies });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  }
+
   static async excluirRedacao(req, res) {
     try {
       const { id } = req.params;

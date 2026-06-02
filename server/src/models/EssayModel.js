@@ -85,6 +85,17 @@ const EssayModel = {
 
     if (error) throw new Error(error.message);
   },
+
+  async getProgressData(userId) {
+    const { data, error } = await supabase
+      .from('essays')
+      .select('final_score, feedback_json, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: true });
+
+    if (error) throw new Error(error.message);
+    return data;
+  },
 };
 
 module.exports = EssayModel;

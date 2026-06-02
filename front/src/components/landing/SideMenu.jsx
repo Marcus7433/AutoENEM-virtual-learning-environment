@@ -6,7 +6,7 @@ const NAV_ITEMS = [
   { icon: Home,     label: 'Início',        key: 'inicio',    to: '/',          auth: false },
   { icon: FileText, label: 'Redações',      key: 'redacoes',  to: '/historico', auth: true  },
   { icon: BookOpen, label: 'Estudar',       key: 'estudar',   to: null,         auth: false },
-  { icon: Trophy,   label: 'Meu Progresso', key: 'progresso', to: null,         auth: false },
+  { icon: Trophy,   label: 'Meu Progresso', key: 'progresso', to: '/progresso', auth: true  },
 ];
 
 function SideMenu({ open, activeKey, onClose, onNova, onInicio, onAuthRequired }) {
