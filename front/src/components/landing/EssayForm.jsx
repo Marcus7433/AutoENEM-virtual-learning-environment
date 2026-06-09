@@ -22,7 +22,7 @@ function EssayForm({
 
   return (
     <section className="mx-auto mt-6 max-w-2xl rounded-2xl bg-white/20 p-8 shadow-md backdrop-blur-sm">
-      <h1 className="text-center text-3xl font-bold text-white">Corretor de Redacao ENEM</h1>
+      <h1 className="text-center text-3xl font-bold text-white"><span className="text-brand">Auto</span>ENEM</h1>
       <p className="mt-2 text-center text-sm text-white/80">
         Envie sua redacao e receba uma analise completa baseada nos criterios do ENEM
       </p>
@@ -44,7 +44,7 @@ function EssayForm({
             Sua redacao
           </label>
           <span className="text-xs text-white/70">
-            {wordsCount} palavras - {linesCount} {linesCount === 1 ? 'linha' : 'linhas'}
+            {wordsCount} palavras - {linesCount} {linesCount === 1 ? 'linha' : 'parágrafo(s)'}
           </span>
         </div>
 
@@ -55,7 +55,7 @@ function EssayForm({
             disabled={isTranscribing || locked}
             rows={10}
             placeholder={isTranscribing ? '' : 'Digite ou cole sua redacao aqui...'}
-            className="w-full rounded-xl border border-white/40 bg-white/90 px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-xl border border-white/40 bg-white/90 px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 disabled:cursor-not-allowed disabled:opacity-50 text-justify"
           />
           {isTranscribing && (
             <div className="absolute inset-0 rounded-xl border border-white/30 bg-white/20 backdrop-blur-sm cursor-not-allowed" />

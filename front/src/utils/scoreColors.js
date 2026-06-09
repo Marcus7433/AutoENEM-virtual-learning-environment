@@ -23,9 +23,10 @@ function tier(pct) {
 export const totalColor    = (n) => COLORS[tier(n / 1000)].text;
 export const totalColorHex = (n) => COLORS[tier(n / 1000)].hex;
 
-export const compColor = (n) => COLORS[tier(n / 200)].text;
-export const compBadge = (n) => COLORS[tier(n / 200)].badge;
-export const compBar   = (n) => COLORS[tier(n / 200)].bar;
+export const compColor    = (n) => COLORS[tier(n / 200)].text;
+export const compColorHex = (n) => COLORS[tier(n / 200)].hex;
+export const compBadge    = (n) => COLORS[tier(n / 200)].badge;
+export const compBar      = (n) => COLORS[tier(n / 200)].bar;
 
 export function getDica(nota) {
   if (nota >= 900) return 'Incrível! Você está entre os melhores candidatos do ENEM! 🏆';

@@ -76,7 +76,10 @@ server/
     │
     ├── controllers/
     │   ├── AuthController.js  → Lógica de login, cadastro, OAuth, logout e deletar conta
-    │   └── EssayController.js → Lógica de corrigir, listar, buscar, excluir e progresso
+    │   └── EssayController.js → Orquestra req/res: valida entrada, chama PythonService e EssayModel
+    │
+    ├── services/
+    │   └── PythonService.js   → Toda comunicação com o Flask: corrigir() e transcrever() com timeout e tratamento de erro
     │
     └── models/
         └── EssayModel.js      → Acesso direto ao Supabase (banco de dados e storage)
@@ -129,13 +132,14 @@ Token válido → coloca o usuário em req.user e passa para o controller
 
 Todas as rotas são protegidas pelo `authMiddleware`. O upload de imagem usa **multer** com armazenamento em memória (não salva em disco) e limite de 10MB, aceitando apenas arquivos de imagem.
 
-> A rota `/progress` é declarada **antes** de `/:id` para evitar que a string `"progress"` seja interpretada como um UUID de redação pelo Express.
+> As rotas `/progress` e `/transcrever` são declaradas **antes** de `/:id` para evitar que essas strings sejam interpretadas como UUID pelo Express.
 
 | Método | Rota | O que faz |
 |---|---|---|
 | GET | `/api/essays` | Lista todas as redações do usuário logado |
 | POST | `/api/essays` | Corrige e salva uma nova redação |
 | GET | `/api/essays/progress` | Retorna dados agregados de progresso do usuário |
+| POST | `/api/essays/transcrever` | Proxy autenticado para a transcrição de imagem via Flask |
 | GET | `/api/essays/:id` | Busca uma redação específica pelo ID |
 | DELETE | `/api/essays/:id` | Exclui uma redação e sua imagem |
 
@@ -163,9 +167,19 @@ Contém a lógica de cada rota de autenticação.
 
 ---
 
+## `src/services/PythonService.js`
+
+Isola toda comunicação com o Flask. O `EssayController` não conhece URLs, timeouts nem `AbortController` — delega para este serviço.
+
+**`corrigir(topic, content)`** — monta o JSON e chama `POST /prever` com `X-Internal-API-Key` e timeout de 2 minutos. Lança erro com status HTTP adequado (503 se Flask offline, 504 se timeout, 502 se resposta inválida).
+
+**`transcrever(file)`** — monta um `FormData` com o buffer do arquivo recebido via multer e chama `POST /transcrever` com timeout de 60 segundos.
+
+---
+
 ## `src/controllers/EssayController.js`
 
-Contém a lógica de cada rota de redação.
+Responsável apenas por req/res: valida entrada, orquestra chamadas ao `PythonService` e ao `EssayModel`, e formata a resposta.
 
 **`corrigirRedacao`** — o fluxo mais complexo do server:
 
@@ -176,18 +190,14 @@ Valida campos obrigatórios e tamanho mínimo do texto (50 chars)
     ↓
 Se tem imagem → faz upload para o Supabase Storage via EssayModel.uploadImage()
     ↓
-Chama a API Python (localhost:5001/prever) com tema e texto
-  → envia X-Internal-API-Key no header para autenticar
-  → timeout de 2 minutos (a IA pode demorar)
-    ↓
-Recebe nota_final + feedback da Python
+PythonService.corrigir(topic, content) → nota_final + feedback
     ↓
 Salva tudo no banco via EssayModel.save()
     ↓
 Retorna o resultado para o front
 ```
 
-A chamada para a Python tem tratamento de erro detalhado: se demorar mais de 2 minutos retorna 504 (timeout), se a Python estiver fora do ar retorna 503.
+**`transcreverImagem`** — valida se o arquivo chegou e delega para `PythonService.transcrever(req.file)`. Retorna o JSON da transcrição diretamente.
 
 **`listarRedacoes`** — busca todas as redações do usuário ordenadas por data. Se alguma tiver imagem, gera uma URL assinada com validade de 1 hora para o front conseguir exibir.
 

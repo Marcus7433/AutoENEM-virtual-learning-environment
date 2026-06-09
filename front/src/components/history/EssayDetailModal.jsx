@@ -33,7 +33,11 @@ function EssayDetailModal({ loading, data, onClose }) {
               <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-slate-700 dark:text-slate-300">{data.content}</p>
             </div>
 
-            <CorrectionResult feedback={data} />
+            <CorrectionResult
+              feedback={data}
+              topic={data.topic}
+              content={data.content}
+            />
           </>
         )}
       </div>

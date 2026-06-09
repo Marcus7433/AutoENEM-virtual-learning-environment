@@ -1,7 +1,10 @@
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import { Download } from 'lucide-react';
 import { COMPETENCIAS, getDica, totalColor } from '../../utils/scoreColors';
 import CompetenciaCard from './CompetenciaCard';
+import EssayPDF from '../EssayPDF';
 
-function CorrectionResult({ feedback, resultRef }) {
+function CorrectionResult({ feedback, resultRef, topic, content }) {
   const nota = feedback.nota ?? 0;
 
   return (
@@ -39,6 +42,32 @@ function CorrectionResult({ feedback, resultRef }) {
           <span className="font-semibold">Dica:</span> {getDica(nota)}
         </p>
       </div>
+
+      {topic && content && (
+        <div className="mt-4 flex justify-end">
+          <PDFDownloadLink
+            document={
+              <EssayPDF
+                topic={topic}
+                content={content}
+                nota={nota}
+                feedback={feedback.feedback ?? {}}
+              />
+            }
+            fileName={`correcao-${topic.slice(0, 40).replace(/\s+/g, '-')}.pdf`}
+          >
+            {({ loading }) => (
+              <button
+                className="flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white shadow transition hover:opacity-90 disabled:opacity-50"
+                disabled={loading}
+              >
+                <Download size={15} />
+                {loading ? 'Gerando PDF...' : 'Exportar PDF'}
+              </button>
+            )}
+          </PDFDownloadLink>
+        </div>
+      )}
     </section>
   );
 }

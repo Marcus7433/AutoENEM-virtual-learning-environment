@@ -62,7 +62,7 @@ const LandingContent = forwardRef(function LandingContent(_, ref) {
       setIsTranscribing(true);
       const formData = new FormData();
       formData.append('image', file);
-      const response = await fetch('http://localhost:5001/transcrever', { method: 'POST', body: formData });
+      const response = await fetch(`${API}/api/essays/transcrever`, { method: 'POST', credentials: 'include', body: formData });
       if (!response.ok) throw new Error((await response.text()) || 'Falha na transcricao.');
       const data = await response.json();
       const text = data.texto_transcrito ?? data.transcricao ?? data.text ?? data.content ?? '';
@@ -171,7 +171,14 @@ const LandingContent = forwardRef(function LandingContent(_, ref) {
         onSaveImageToggle={() => setSaveImage((prev) => !prev)}
       />
 
-      {feedback && <CorrectionResult feedback={feedback} resultRef={resultRef} />}
+      {feedback && (
+        <CorrectionResult
+          feedback={feedback}
+          resultRef={resultRef}
+          topic={topic}
+          content={essayText}
+        />
+      )}
 
       {locked && <FloatingActions onNova={resetPage} onDelete={() => setShowDeleteModal(true)} />}
 

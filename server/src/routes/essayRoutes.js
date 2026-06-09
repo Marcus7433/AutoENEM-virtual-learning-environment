@@ -14,10 +14,11 @@ const upload = multer({
   },
 });
 
-router.get('/',           authMiddleware, EssayController.listarRedacoes);
-router.post('/',          authMiddleware, upload.single('image'), EssayController.corrigirRedacao);
-router.get('/progress',   authMiddleware, EssayController.getProgress);
-router.get('/:id',        authMiddleware, EssayController.buscarRedacao);
-router.delete('/:id',     authMiddleware, EssayController.excluirRedacao);
+router.get('/',              authMiddleware, EssayController.listarRedacoes);
+router.post('/',             authMiddleware, upload.single('image'), EssayController.corrigirRedacao);
+router.get('/progress',      authMiddleware, EssayController.getProgress);
+router.post('/transcrever',  authMiddleware, upload.single('image'), EssayController.transcreverImagem);
+router.get('/:id',           authMiddleware, EssayController.buscarRedacao);
+router.delete('/:id',        authMiddleware, EssayController.excluirRedacao);
 
 module.exports = router;

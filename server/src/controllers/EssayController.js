@@ -1,50 +1,5 @@
 const EssayModel = require('../models/EssayModel');
-
-const PYTHON_URL = 'http://localhost:5001/prever';
-const PYTHON_TIMEOUT_MS = 120_000;
-
-async function callPythonAI(topic, content) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), PYTHON_TIMEOUT_MS);
-
-  let response;
-  try {
-    response = await fetch(PYTHON_URL, {
-      method: 'POST',
-      signal: controller.signal,
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Internal-API-Key': process.env.INTERNAL_API_KEY || '',
-      },
-      body: JSON.stringify({ tema_redacao: topic, texto_redacao: content }),
-    });
-  } catch (err) {
-    if (err.name === 'AbortError') {
-      throw Object.assign(new Error('A API de correcao demorou demais. Tente novamente.'), { status: 504 });
-    }
-    throw Object.assign(new Error('Nao foi possivel conectar a API de correcao. Verifique se ela esta rodando.'), { status: 503 });
-  } finally {
-    clearTimeout(timeoutId);
-  }
-
-  if (!response.ok) {
-    let details = '';
-    try {
-      const errJson = await response.json();
-      details = errJson.erro || errJson.error || errJson.message || JSON.stringify(errJson);
-    } catch {
-      details = await response.text();
-    }
-    throw Object.assign(new Error('Falha ao obter correcao da API de IA.'), { status: 502, details });
-  }
-
-  const data = await response.json();
-  if (typeof data.nota_final === 'undefined' || typeof data.feedback === 'undefined') {
-    throw Object.assign(new Error('Resposta da API de IA em formato inesperado.'), { status: 502 });
-  }
-
-  return data;
-}
+const PythonService = require('../services/PythonService');
 
 class EssayController {
   static async listarRedacoes(req, res) {
@@ -78,7 +33,7 @@ class EssayController {
         });
       }
 
-      const { nota_final, feedback } = await callPythonAI(topic, content);
+      const { nota_final, feedback } = await PythonService.corrigir(topic, content);
       const essay = await EssayModel.save({ userId, title, topic, content, nota_final, feedback, imagePath });
 
       return res.status(200).json({
@@ -171,6 +126,21 @@ class EssayController {
       return res.json({ total, bestScore, avgScore, thisMonth, monthlyData, competencies });
     } catch (error) {
       return res.status(500).json({ message: error.message });
+    }
+  }
+
+  static async transcreverImagem(req, res) {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: 'Nenhum arquivo enviado.' });
+      }
+      const data = await PythonService.transcrever(req.file);
+      return res.json(data);
+    } catch (error) {
+      return res.status(error.status || 500).json({
+        message: error.message,
+        ...(error.details && { details: error.details }),
+      });
     }
   }
 

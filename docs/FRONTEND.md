@@ -1,6 +1,6 @@
 # Frontend — AutoENEM
 
-Stack: **React + Vite + TailwindCSS + recharts**. Roda na porta `5173`.
+Stack: **React + Vite + TailwindCSS + recharts + @react-pdf/renderer**. Roda na porta `5173`.
 
 ---
 
@@ -57,12 +57,14 @@ Se não estiver logado → abre modal de login
     ↓
 Abre seletor de arquivo
     ↓
-POST localhost:5001/transcrever  (direto para a API Python)
+POST localhost:3000/api/essays/transcrever  (passa pelo Node.js)
+    ↓
+Node.js faz proxy para a API Python (localhost:5001/transcrever)
     ↓
 Texto extraído preenchido automaticamente no campo de redação
 ```
 
-> A transcrição vai direto para a porta 5001 (Python), sem passar pelo Node.js.
+> A transcrição passa pelo Express (porta 3000), que autentica o usuário via `authMiddleware` antes de repassar para o Flask. O front nunca fala diretamente com a porta 5001.
 
 ## Fluxo — Autenticação OAuth
 
@@ -109,13 +111,14 @@ front/
 │   │   ├── AuthModal.jsx            → Modal de login/cadastro (suporta dark mode, fecha ao clicar fora)
 │   │   ├── ProfileModal.jsx         → Modal com dados do perfil e botão de logout
 │   │   ├── ProtectedRoute.jsx       → Bloqueia rotas para usuários não logados
+│   │   ├── EssayPDF.jsx             → Documento PDF gerado pelo @react-pdf/renderer (tema, redação, nota, C1–C5)
 │   │   │
 │   │   ├── layout/
 │   │   │   └── PageShell.jsx        → Wrapper de layout: entrega header, menu e modais para todas as páginas
 │   │   │
 │   │   ├── landing/                 → Componentes exclusivos da LandingPage
 │   │   │   ├── EssayForm.jsx            → Formulário com campos de tema, texto e upload de imagem
-│   │   │   ├── CorrectionResult.jsx     → Exibe o resultado da correção (notas e feedback por competência)
+│   │   │   ├── CorrectionResult.jsx     → Exibe o resultado da correção (notas e feedback por competência) + botão exportar PDF
 │   │   │   ├── CompetenciaCard.jsx      → Card individual de cada competência do ENEM
 │   │   │   ├── FloatingActions.jsx      → Botões flutuantes "Nova redação" e "Excluir" após correção
 │   │   │   ├── PageHeader.jsx           → Barra do topo com logo, menu hamburguer e botão de perfil
@@ -153,7 +156,7 @@ front/
 │   │   └── essayDraft.js        → Função clearEssayDraft() que limpa o rascunho salvo no localStorage
 │   │
 │   └── utils/
-│       └── scoreColors.js       → Funções utilitárias de cor por faixa de pontuação (ver seção abaixo)
+│       └── scoreColors.js       → Funções utilitárias de cor por faixa de pontuação: totalColor, totalColorHex, compColor, compColorHex, compBadge, compBar, getDica
 │
 ├── index.html               → HTML base onde o React é injetado
 ├── vite.config.js           → Configuração do Vite (bundler)
