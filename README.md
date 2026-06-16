@@ -57,6 +57,14 @@ Em resumo: instale as dependências dos 3 servidores, configure os `.env` e rode
 
 ---
 
+## Documentação negocial
+
+| Documento | Descrição |
+|---|---|
+| [`docs/NEGOCIAL.md`](./docs/NEGOCIAL.md) | Problema, público-alvo, proposta de valor, benefícios e contexto de uso |
+
+---
+
 ## Documentação técnica
 
 | Documento | Descrição |
@@ -76,3 +84,15 @@ Em resumo: instale as dependências dos 3 servidores, configure os `.env` e rode
 - **Fetch API nativa** para todas as chamadas HTTP
 - **Protected Routes** via wrapper component
 - **localStorage** para rascunho de redação e preferência de tema
+
+---
+
+## Autores
+
+| RA | Nome |
+|---|---|
+| 22350665 | Gustavo Lourenço |
+| 22351224 | Eduardo Tannous |
+| 22352472 | Diego de Souza |
+| 22353630 | Marcus Vinícius |
+| 22301663 | Eduardo Eiji |
